@@ -1,0 +1,17 @@
+{
+  "name": "LilyGO-T-Keyboard-Voice",
+  "version": "0.1.0",
+  "license": "MIT",
+  "repository": {"type": "git", "url": "https://github.com/Xinyuan-LilyGO/T-Keyboard-Voice.git"},
+  "description": "T-Keyboard Voice V0.3 board support and peripheral examples",
+  "keywords": ["lilygo", "esp32s3", "keyboard", "audio"],
+  "frameworks": ["arduino"],
+  "platforms": ["espressif32"],
+  "headers": ["VoicePower.h", "VoiceDisplay.h", "VoiceInput.h", "VoiceRGB.h", "VoiceAudio.h"],
+  "build": {"srcDir": "src"},
+  "dependencies": {
+    "lovyan03/LovyanGFX": "1.2.26",
+    "lbuque/ButtonSense": "1.0.0",
+    "SensorLib": "https://github.com/lewisxhe/SensorLib.git#2b9e591f245e447d3d00ec8798c3f49b897882d9"
+  }
+}

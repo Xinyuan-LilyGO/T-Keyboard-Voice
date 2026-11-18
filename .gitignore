@@ -1,0 +1,15 @@
+.pio/
+/.vscode/*
+!/.vscode/tasks.json
+!/.vscode/settings.json
+__pycache__/
+*.pyc
+.DS_Store
+.build/
+*.ino.cpp
+compile_commands.json
+idf/build/
+idf/managed_components/
+idf/sdkconfig
+idf/sdkconfig.old
+examples/*/build/

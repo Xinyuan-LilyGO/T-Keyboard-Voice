@@ -1,0 +1,35 @@
+{
+    "cmake.sourceDirectory": "${workspaceFolder}/idf",
+    "platformio-ide.toolbar": [
+        {
+            "text": "$(home)",
+            "tooltip": "PlatformIO Home",
+            "commands": "platformio-ide.showHome"
+        },
+        {
+            "text": "$(check)",
+            "tooltip": "编译所选示例（直接调用 PlatformIO Core）",
+            "commands": [{"id": "workbench.action.tasks.runTask", "args": ["T-Keyboard Voice: Build"]}]
+        },
+        {
+            "text": "$(arrow-right)",
+            "tooltip": "上传所选示例（需要连接设备）",
+            "commands": [{"id": "workbench.action.tasks.runTask", "args": ["T-Keyboard Voice: Upload"]}]
+        },
+        {
+            "text": "$(trashcan)",
+            "tooltip": "清理所选示例的编译产物",
+            "commands": [{"id": "workbench.action.tasks.runTask", "args": ["T-Keyboard Voice: Clean"]}]
+        },
+        {
+            "text": "$(plug)",
+            "tooltip": "打开所选示例的串口监视器",
+            "commands": [{"id": "workbench.action.tasks.runTask", "args": ["T-Keyboard Voice: Monitor"]}]
+        },
+        {
+            "text": "$(terminal)",
+            "tooltip": "PlatformIO 终端",
+            "commands": "platformio-ide.newTerminal"
+        }
+    ]
+}

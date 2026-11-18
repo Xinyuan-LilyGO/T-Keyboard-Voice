@@ -1,0 +1,9 @@
+menu "T-Keyboard Voice compatibility"
+
+# Arduino-ESP32 3.3.11 的 CMake 已识别 ESP_I2S，但尚未提供对应的 Kconfig 开关。
+config ARDUINO_SELECTIVE_ESP_I2S
+    bool "Enable Arduino ESP_I2S"
+    depends on ARDUINO_SELECTIVE_COMPILATION
+    default y
+
+endmenu
