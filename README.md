@@ -12,7 +12,7 @@ Board support for ESP32-S3 N16R8, with **7 standalone peripheral demos** and **1
 | [Arduino IDE / CLI](docs/arduino_ide.md) | Arduino-ESP32 3.3.11; the same library and examples |
 | [ESP-IDF](docs/esp_idf.md) | ESP-IDF 5.5.6 with the official Arduino 3.3.11 component; select examples through CMake |
 
-All three build systems share the same drivers, examples, and test audio. The ESP-IDF project uses the Arduino component; it is not a pure ESP-IDF driver port. The linked detailed guides are currently in Chinese.
+All three build systems share the same drivers, examples, and test audio. The ESP-IDF project uses the Arduino component; it is not a pure ESP-IDF driver port. Each Markdown guide under `docs/` contains English first, followed by Simplified Chinese in the same file.
 
 ## Quick Start
 
@@ -59,9 +59,9 @@ python scripts/package_arduino.py
 
 7. Click **Verify** to compile, then **Upload** to flash. Open Serial Monitor at **115200 baud**, with LF or CRLF line endings.
 
-Test audio is built in; no separate filesystem upload is required. See the [Arduino guide (Chinese)](docs/arduino_ide.md) for full installation, download-mode recovery, and Arduino CLI batch build instructions.
+Test audio is built in; no separate filesystem upload is required. See the [Arduino guide](docs/arduino_ide.md) for full installation, download-mode recovery, and Arduino CLI batch build instructions.
 
-8. Alternatively, use **Arduino CLI**, which is usually bundled with recent Arduino IDE releases, and give an AI agent the following request: “Please configure the project environment according to the [Arduino guide (Chinese)](docs/arduino_ide.md). If network issues occur in mainland China, please enable a VPN.”
+8. Alternatively, use **Arduino CLI**, which is usually bundled with recent Arduino IDE releases, and give an AI agent the following request: “Please configure the project environment according to the [Arduino guide](docs/arduino_ide.md). If network issues occur in mainland China, please enable a VPN.”
 
 ### 3. ESP-IDF
 
@@ -82,7 +82,7 @@ Connect the board, then specify its actual port to build, flash, and open the mo
 idf.py -C idf -D IDF_TARGET=esp32s3 -D VOICE_EXAMPLE=Factory -p COMx build flash monitor
 ```
 
-Replace `COMx` with the actual port, using the appropriate device path on Linux/macOS. Exit the monitor with `Ctrl+]`. To switch examples, explicitly change `VOICE_EXAMPLE`, such as to `AudioRecord`, rather than accidentally flashing a previously selected demo. Component Manager downloads the official components; Flash/PSRAM defaults are in `idf/sdkconfig.defaults`. See the [ESP-IDF guide (Chinese)](docs/esp_idf.md).
+Replace `COMx` with the actual port, using the appropriate device path on Linux/macOS. Exit the monitor with `Ctrl+]`. To switch examples, explicitly change `VOICE_EXAMPLE`, such as to `AudioRecord`, rather than accidentally flashing a previously selected demo. Component Manager downloads the official components; Flash/PSRAM defaults are in `idf/sdkconfig.defaults`. See the [ESP-IDF guide](docs/esp_idf.md).
 
 **Important:** Partition layouts differ between the three build systems. Use the corresponding tool's complete flashing process when switching; do not mix bootloaders, partition tables, and application images.
 
@@ -136,13 +136,13 @@ For Arduino CLI and ESP-IDF batch builds, use `scripts/build_arduino.py` and `sc
 
 Host tests require a native C++ compiler, which can be selected through `CXX`. Batch build scripts do not flash the board. See [validation.md](docs/validation.md) for verified build results and the remaining hardware acceptance checklist.
 
-- [Pinout (Chinese)](docs/pinmap.md)
-- [Power and sleep (Chinese)](docs/power_and_sleep.md)
-- [Audio (Chinese)](docs/audio.md)
-- [Factory test guide (Chinese)](docs/factory_test_guide_cn.md)
-- [Migration map (Chinese)](docs/migration_map.md)
-- [Dependencies and resource provenance (Chinese)](docs/third_party.md)
+- [Pinout](docs/pinmap.md)
+- [Power and sleep](docs/power_and_sleep.md)
+- [Audio](docs/audio.md)
+- [Factory test guide](docs/factory_test_guide_cn.md)
+- [Migration map](docs/migration_map.md)
+- [Dependencies and resource provenance](docs/third_party.md)
 
 ## Licensing
 
-This repository retains the [MIT License](LICENSE) already established in the GitHub repository. Third-party dependencies and referenced audio, images, and hardware materials remain subject to their respective copyrights, licenses, and authorization requirements. See [dependencies and resource provenance (Chinese)](docs/third_party.md).
+This repository retains the [MIT License](LICENSE) already established in the GitHub repository. Third-party dependencies and referenced audio, images, and hardware materials remain subject to their respective copyrights, licenses, and authorization requirements. See [dependencies and resource provenance](docs/third_party.md).

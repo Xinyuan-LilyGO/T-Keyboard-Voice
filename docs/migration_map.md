@@ -1,4 +1,45 @@
-# 迁移对照
+# Migration Map
+
+[English](#english) | [简体中文](#简体中文)
+
+## English
+
+The original project remains in the `T-Keyboard Voice` directory, whose name contains a space. The new project is `T-Keyboard-Voice`.
+
+| Original location/function | New location |
+| --- | --- |
+| `include/pin_config.h` | `src/pin_config.h` |
+| `include/es7210_samples.h` | `src/es7210_samples.h` |
+| `include/power_key_standby.h` | `src/power_key_standby.h` |
+| `src/voice_display.cpp`, `include/voice_display.h` | `src/VoiceDisplay.cpp/.h` |
+| AXP2101, battery, I2C register access, sleep/wake functions | `src/VoicePower.cpp/.h` |
+| Five-display initialization and backlight | `src/VoiceDisplay.cpp/.h` |
+| Five-key initialization and event management | `src/VoiceInput.cpp/.h` |
+| RMT and WS2812 output | `src/VoiceRGB.cpp/.h` |
+| ES8389/ES7210, I2S lifecycle, recording/playback, and sample unpacking calls | `src/VoiceAudio.cpp/.h` |
+| Test catalog, PASS/FAIL, five-display pages, waveforms, key navigation, and serial commands | `examples/Factory/Factory.cpp` |
+| Test audio | `assets/66_stereo_48k.wav`, original bytes unchanged |
+| Other original audio | `assets/original/66.wav`, archive only |
+| Original factory-test DOCX | `docs/hardware/`, entries cleaned up and numbering aligned to the current 18 tests; the original project copy is retained |
+| Two host regression tests | `tests/`, with an updated build entry and the core cases retained |
+
+Shared functions use the `KeyboardVoice` namespace. Pin definitions `Pins`, device addresses `Devices`, and the single-panel `VoiceDisplay` class retain their original names. Rail masks use `PowerRail::Audio`, `KeyboardDisplay`, `Rgb`, and `All` to avoid Arduino macro conflicts.
+
+Required changes:
+
+- `initializeAudio(bool)` is replaced by explicit `AudioMode` selection instead of inferring the format from the current Factory test number.
+- Waveform UI stays in Factory; low-level capture goes through `readMicrophoneFrames()`, so the standalone recording demo does not depend on LCDs.
+- The power layer invokes application cleanup/recovery through `SleepHooks` and does not reference Factory state.
+- PMIC baseline initialization preserves MCU power and enables other required rails on demand; Factory still requests all peripheral rails.
+- GPIO/register timing, manual decisions, and external I2C pass conditions needed by the current hardware are retained. Current test numbering is defined by Factory's 18-item catalog.
+
+The migration did not copy `.pio`, editor caches, `tmp`, or the unused `lv_esp_idf` directory. Dependencies are obtained again through pinned build configurations.
+
+---
+
+## 简体中文
+
+**迁移对照**
 
 原工程保留在带空格的 `T-Keyboard Voice` 目录，新工程为 `T-Keyboard-Voice`。
 

@@ -30,4 +30,4 @@ With no battery connected, `ABSENT` is expected and does not indicate a PMIC com
 
 ## Troubleshooting
 
-If initialization fails, check address `0x34`, SDA/SCL, and the power supply. For wake-up problems, check the battery/USB conditions and GPIO12/21. Sleep current must be measured with suitable instruments. See the [power guide (Chinese)](../../docs/power_and_sleep.md).
+If initialization fails, check address `0x34`, SDA/SCL, and the power supply. For wake-up problems, check the battery/USB conditions and GPIO12/21. Sleep current must be measured with suitable instruments. See the [power guide](../../docs/power_and_sleep.md).

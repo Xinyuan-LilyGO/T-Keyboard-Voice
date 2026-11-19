@@ -15,7 +15,7 @@ Complete board test firmware for T-Keyboard Voice V0.3, with **18 tests, a five-
 - A 3.3 V logic I2C peripheral whose address does not conflict with onboard `0x10`, `0x34`, or `0x40`.
 - A 3.3 V USB-to-TTL adapter for UART testing, or a jumper for CN3 TX/RX loopback.
 
-**Disconnect USB and the battery before changing wiring; deep sleep is not power-off.** Do not connect CN3 to RS-232 or 5 V TTL, or directly connect two driven outputs. See the [pinout (Chinese)](../../docs/pinmap.md).
+**Disconnect USB and the battery before changing wiring; deep sleep is not power-off.** Do not connect CN3 to RS-232 or 5 V TTL, or directly connect two driven outputs. See the [pinout](../../docs/pinmap.md).
 
 ## 2. Build, Upload, and Connect
 
@@ -31,11 +31,11 @@ pio device monitor -b 115200
 
 To select a port, append `--upload-port COMx` when uploading and `-p COMx` for the monitor. Replace `COMx` with the actual device port.
 
-In VS Code, the project's **Ctrl+Shift+B** task lets you select `factory` without using the extension's cached task list. See [VS Code troubleshooting (Chinese)](../../docs/vscode_troubleshooting.md) for the `reading 'id'` exception and project-local status-bar buttons.
+In VS Code, the project's **Ctrl+Shift+B** task lets you select `factory` without using the extension's cached task list. See [VS Code troubleshooting](../../docs/vscode_troubleshooting.md) for the `reading 'id'` exception and project-local status-bar buttons.
 
 ### Arduino IDE
 
-Install the official **esp32 3.3.11** board package and required libraries. Select **ESP32S3 Dev Module, 16 MB Flash, OPI PSRAM, Hardware CDC and JTAG, and USB CDC On Boot Enabled**. Open `Factory.ino`; keep `Factory.cpp` and `build_opt.h` in the same directory. See the [Arduino guide (Chinese)](../../docs/arduino_ide.md) for the complete partition and menu settings.
+Install the official **esp32 3.3.11** board package and required libraries. Select **ESP32S3 Dev Module, 16 MB Flash, OPI PSRAM, Hardware CDC and JTAG, and USB CDC On Boot Enabled**. Open `Factory.ino`; keep `Factory.cpp` and `build_opt.h` in the same directory. See the [Arduino guide](../../docs/arduino_ide.md) for the complete partition and menu settings.
 
 ### ESP-IDF
 
@@ -46,7 +46,7 @@ python scripts/prepare_dependencies.py
 idf.py -C idf -D IDF_TARGET=esp32s3 -D VOICE_EXAMPLE=Factory -p COMx build flash monitor
 ```
 
-Replace `COMx` with the actual port. Exit the ESP-IDF monitor with `Ctrl+]`. Explicitly select Factory rather than accidentally flashing a previously selected demo. See the [ESP-IDF guide (Chinese)](../../docs/esp_idf.md).
+Replace `COMx` with the actual port. Exit the ESP-IDF monitor with `Ctrl+]`. Explicitly select Factory rather than accidentally flashing a previously selected demo. See the [ESP-IDF guide](../../docs/esp_idf.md).
 
 All three builds use the **115200-baud USB CDC console**. Commands must end with a newline; select LF or CRLF. CN3 UART0 is not the console. Reselect the port if USB re-enumerates. Partition layouts differ between build systems; do not mix an old bootloader/partition table with a new application.
 
@@ -169,7 +169,7 @@ In test 12, first short-press KEY2, KEY3, and KEY4. Press KEY1 to move to test 1
 4. Wake with KEY4, holding it until startup begins if necessary, then release it. Reconnect the USB console and send `power`; check the corresponding KEY4 wake source.
 5. For USB-insertion wake testing, use a battery to maintain sleep with VBUS initially absent, then insert USB and check `USB/VBUS wake`. A cable that stays connected generates no new insertion event. **Removing USB from a USB-only board and reconnecting it is a power cycle, not a battery-backed USB-insertion wake test.**
 
-Deep sleep retains DCDC1; it is not PMIC power-off. Wake-up restarts the application at test 1. Results are stored in RAM and do not survive a reset/deep-sleep wake. Do not mistake the new boot's test 1 PASS for a test 3 pass. To record test 3 again, select `run 3` and manually confirm it against the actual wake observations. See the [power/sleep guide (Chinese)](../../docs/power_and_sleep.md) for supply conditions and failed-sleep recovery.
+Deep sleep retains DCDC1; it is not PMIC power-off. Wake-up restarts the application at test 1. Results are stored in RAM and do not survive a reset/deep-sleep wake. Do not mistake the new boot's test 1 PASS for a test 3 pass. To record test 3 again, select `run 3` and manually confirm it against the actual wake observations. See the [power/sleep guide](../../docs/power_and_sleep.md) for supply conditions and failed-sleep recovery.
 
 ## 7. Troubleshooting and Final Records
 
@@ -185,4 +185,4 @@ Deep sleep retains DCDC1; it is not PMIC power-off. Wake-up restarts the applica
 
 Finish with `status` and review all 18 tests. Any `WAIT` or `CHECK` means the complete set has not been confirmed. Even all-`PASS` results must be reviewed against original logs, observations, and measurements because manual overrides can hide faults. The firmware does not automatically export or persist an acceptance report. Record the board/hardware revision, firmware/build system, date, operator, observations, and measured voltages/currents.
 
-Further references: [Factory test guide (Chinese)](../../docs/factory_test_guide_cn.md), [audio guide (Chinese)](../../docs/audio.md), and [software validation and hardware limits (Chinese)](../../docs/validation.md).
+Further references: [Factory test guide](../../docs/factory_test_guide_cn.md), [audio guide](../../docs/audio.md), and [software validation and hardware limits](../../docs/validation.md).

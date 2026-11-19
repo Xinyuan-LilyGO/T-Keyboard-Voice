@@ -24,4 +24,4 @@ pio device monitor -b 115200
 
 对板载麦说话、向 CN5 输入已知信号，观察对应通道变化；录音回放需要听到实际录制内容并检查两只扬声器。不要将空接 ADC 噪声当作有效声音。`external` 仅采集时 MIC4 可能安静；它是参考输入，不是回声消除算法。
 
-CN5 检测脚仅作提示，某些 TRRS 插头不会改变它。初始化/超时失败会打印 FAILED，可用 `onboard` 或 `external` 重试。检查 ALDO2、0x40、I2S 时钟、PSRAM 和插头类型。录放切换、线序和增益见 [音频说明](../../docs/audio.md)。
+CN5 检测脚仅作提示，某些 TRRS 插头不会改变它。初始化/超时失败会打印 FAILED，可用 `onboard` 或 `external` 重试。检查 ALDO2、0x40、I2S 时钟、PSRAM 和插头类型。录放切换、线序和增益见 [音频说明](../../docs/audio.md#简体中文)。

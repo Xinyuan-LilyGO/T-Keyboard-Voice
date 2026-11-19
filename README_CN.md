@@ -9,8 +9,8 @@
 | 入口 | 说明 |
 | --- | --- |
 | PlatformIO | 下方快速开始，8 个独立构建环境 |
-| [Arduino IDE / CLI](docs/arduino_ide.md) | Arduino-ESP32 3.3.11，统一库与同一套示例 |
-| [ESP-IDF](docs/esp_idf.md) | ESP-IDF 5.5.6 + 官方 Arduino 3.3.11 组件，CMake 选择示例 |
+| [Arduino IDE / CLI](docs/arduino_ide.md#简体中文) | Arduino-ESP32 3.3.11，统一库与同一套示例 |
+| [ESP-IDF](docs/esp_idf.md#简体中文) | ESP-IDF 5.5.6 + 官方 Arduino 3.3.11 组件，CMake 选择示例 |
 
 三种入口复用相同驱动、示例和测试音频。ESP-IDF 入口仍依赖 Arduino 组件，不是纯 ESP-IDF 驱动移植。
 
@@ -59,9 +59,9 @@ python scripts/package_arduino.py
 
 7. 点击「验证」编译，再点击「上传」烧录；打开串口监视器，设为 **115200**，行结束符选择 LF 或 CRLF。
 
-测试音频已内置，无须额外上传文件系统。完整安装、下载模式和 Arduino CLI 批量构建说明见 [Arduino 使用说明](docs/arduino_ide.md)。
+测试音频已内置，无须额外上传文件系统。完整安装、下载模式和 Arduino CLI 批量构建说明见 [Arduino 使用说明](docs/arduino_ide.md#简体中文)。
 
-8. 或者使用Arduino CLI 一般下载新版Arduino IDE时自带，然后交给AI agent 说：请根据[Arduino 使用说明](docs/arduino_ide.md)帮我配置项目环境，若中国境内遇到网络问题请打开VPN
+8. 或者使用Arduino CLI 一般下载新版Arduino IDE时自带，然后交给AI agent 说：请根据[Arduino 使用说明](docs/arduino_ide.md#简体中文)帮我配置项目环境，若中国境内遇到网络问题请打开VPN
 
 ### 3. ESP-IDF
 
@@ -80,7 +80,7 @@ idf.py -C idf -D IDF_TARGET=esp32s3 -D VOICE_EXAMPLE=Factory build
 idf.py -C idf -D IDF_TARGET=esp32s3 -D VOICE_EXAMPLE=Factory -p COMx build flash monitor
 ```
 
-将 `COMx` 换为实际端口，Linux/macOS 使用对应设备路径；监视器用 `Ctrl+]` 退出。更换示例时显式替换 `VOICE_EXAMPLE`，例如 `AudioRecord`，不要误烧录上次选择的其他 Demo。组件管理器会下载官方组件，Flash/PSRAM 默认配置位于 `idf/sdkconfig.defaults`。详见 [ESP-IDF 使用说明](docs/esp_idf.md)。
+将 `COMx` 换为实际端口，Linux/macOS 使用对应设备路径；监视器用 `Ctrl+]` 退出。更换示例时显式替换 `VOICE_EXAMPLE`，例如 `AudioRecord`，不要误烧录上次选择的其他 Demo。组件管理器会下载官方组件，Flash/PSRAM 默认配置位于 `idf/sdkconfig.defaults`。详见 [ESP-IDF 使用说明](docs/esp_idf.md#简体中文)。
 
 **注意：**三种入口的分区方案不同，切换时应使用对应工具完整烧录，不要混用 bootloader、分区表和应用镜像。
 
@@ -119,7 +119,7 @@ docs/        引脚、硬件资料、产测和验证记录
 - USB CDC 是控制台；CN3 UART0 独立用于接口演示。
 - KEY4 长按休眠仅在 Power 与 Factory 中启用；其他 Demo 不将 KEY4 转换成休眠操作。
 - 首次播放请远离耳朵、先确认接线；采集和播放会重新配置同一个 I2S 资源。
-- Arduino IDE 的板型、依赖及菜单设置见 [Arduino 使用说明](docs/arduino_ide.md)；ESP-IDF 的版本和分区配置见 [ESP-IDF 使用说明](docs/esp_idf.md)。测试音频已内置为只读 C++ 资源，不需要额外上传文件系统。
+- Arduino IDE 的板型、依赖及菜单设置见 [Arduino 使用说明](docs/arduino_ide.md#简体中文)；ESP-IDF 的版本和分区配置见 [ESP-IDF 使用说明](docs/esp_idf.md#简体中文)。测试音频已内置为只读 C++ 资源，不需要额外上传文件系统。
 
 ## 验证
 
@@ -132,15 +132,15 @@ python scripts/generate_audio.py --check
 
 Arduino CLI 与 ESP-IDF 的批量编译分别使用 `scripts/build_arduino.py`、`scripts/build_idf.py`，先按各自文档准备工具链与固定依赖。
 
-主机测试需要原生 C++ 编译器，可通过 `CXX` 指定。批量构建不会上传固件。当前验证结果与尚需实机完成的项目见 [validation.md](docs/validation.md)。
+主机测试需要原生 C++ 编译器，可通过 `CXX` 指定。批量构建不会上传固件。当前验证结果与尚需实机完成的项目见 [validation.md](docs/validation.md#简体中文)。
 
-- [引脚表](docs/pinmap.md)
-- [供电与休眠](docs/power_and_sleep.md)
-- [音频说明](docs/audio.md)
-- [Factory 测试指南](docs/factory_test_guide_cn.md)
-- [迁移对照](docs/migration_map.md)
-- [依赖和资源来源](docs/third_party.md)
+- [引脚表](docs/pinmap.md#简体中文)
+- [供电与休眠](docs/power_and_sleep.md#简体中文)
+- [音频说明](docs/audio.md#简体中文)
+- [Factory 测试指南](docs/factory_test_guide_cn.md#简体中文)
+- [迁移对照](docs/migration_map.md#简体中文)
+- [依赖和资源来源](docs/third_party.md#简体中文)
 
 ## 许可
 
-本仓库保留 GitHub 远程仓库已有的 [MIT License](LICENSE)。第三方依赖以及引用的音频、图片、硬件资料仍须遵守各自的版权、许可证和授权要求，来源说明见 [第三方依赖与资源](docs/third_party.md)。
+本仓库保留 GitHub 远程仓库已有的 [MIT License](LICENSE)。第三方依赖以及引用的音频、图片、硬件资料仍须遵守各自的版权、许可证和授权要求，来源说明见 [第三方依赖与资源](docs/third_party.md#简体中文)。

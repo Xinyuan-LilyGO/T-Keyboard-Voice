@@ -30,4 +30,4 @@ pio device monitor -b 115200
 
 ## 排查
 
-初始化失败先检查 0x34、SDA/SCL 和供电。唤醒失败检查电池/USB 条件及 GPIO12/21；休眠电流需要仪器测量。详情见 [供电说明](../../docs/power_and_sleep.md)。
+初始化失败先检查 0x34、SDA/SCL 和供电。唤醒失败检查电池/USB 条件及 GPIO12/21；休眠电流需要仪器测量。详情见 [供电说明](../../docs/power_and_sleep.md#简体中文)。

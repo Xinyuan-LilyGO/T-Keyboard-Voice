@@ -15,7 +15,7 @@ T-Keyboard Voice V0.3 整机测试固件，包含 **18 项测试、五屏界面�
 - 一个 3.3 V 逻辑 I2C 外设，地址不得与板载 `0x10`、`0x34`、`0x40` 冲突。
 - 3.3 V USB-TTL 对测设备，或用于 CN3 TX/RX 回环的跳线。
 
-**改接线前断开 USB 和电池；deep sleep 不等于断电。** CN3 不可接 RS-232 或 5 V TTL，不可把两个输出端直接并接。详细接线见 [引脚表](../../docs/pinmap.md)。
+**改接线前断开 USB 和电池；deep sleep 不等于断电。** CN3 不可接 RS-232 或 5 V TTL，不可把两个输出端直接并接。详细接线见 [引脚表](../../docs/pinmap.md#简体中文)。
 
 ## 2. 编译、烧录与串口
 
@@ -31,11 +31,11 @@ pio device monitor -b 115200
 
 需要指定端口时，上传追加 `--upload-port COMx`，串口监视器追加 `-p COMx`；将 `COMx` 替换为实际设备端口。
 
-VS Code 可用项目的 **Ctrl+Shift+B** 任务选择 `factory`，避开扩展缓存的任务列表。关于 `reading 'id'` 异常和项目状态栏按钮，见 [VS Code 排查说明](../../docs/vscode_troubleshooting.md)。
+VS Code 可用项目的 **Ctrl+Shift+B** 任务选择 `factory`，避开扩展缓存的任务列表。关于 `reading 'id'` 异常和项目状态栏按钮，见 [VS Code 排查说明](../../docs/vscode_troubleshooting.md#简体中文)。
 
 ### Arduino IDE
 
-安装官方 **esp32 3.3.11** 和所需库，选择 **ESP32S3 Dev Module、16 MB Flash、OPI PSRAM、Hardware CDC and JTAG、USB CDC On Boot Enabled**。打开 `Factory.ino`，同目录的 `Factory.cpp` 和 `build_opt.h` 必须保留。完整分区及菜单设置见 [Arduino 使用说明](../../docs/arduino_ide.md)。
+安装官方 **esp32 3.3.11** 和所需库，选择 **ESP32S3 Dev Module、16 MB Flash、OPI PSRAM、Hardware CDC and JTAG、USB CDC On Boot Enabled**。打开 `Factory.ino`，同目录的 `Factory.cpp` 和 `build_opt.h` 必须保留。完整分区及菜单设置见 [Arduino 使用说明](../../docs/arduino_ide.md#简体中文)。
 
 ### ESP-IDF
 
@@ -46,7 +46,7 @@ python scripts/prepare_dependencies.py
 idf.py -C idf -D IDF_TARGET=esp32s3 -D VOICE_EXAMPLE=Factory -p COMx build flash monitor
 ```
 
-将 `COMx` 换为实际端口；ESP-IDF 监视器用 `Ctrl+]` 退出。不要把之前选择的其他 Demo 当作 Factory 烧录。详见 [ESP-IDF 使用说明](../../docs/esp_idf.md)。
+将 `COMx` 换为实际端口；ESP-IDF 监视器用 `Ctrl+]` 退出。不要把之前选择的其他 Demo 当作 Factory 烧录。详见 [ESP-IDF 使用说明](../../docs/esp_idf.md#简体中文)。
 
 三种入口都使用 **115200 波特率的 USB CDC 控制台**。串口命令须以换行结束，选择 LF 或 CRLF；CN3 UART0 不是控制台。USB 重新枚举后可能需要重新选择端口。不同构建入口的分区方案不同，切换时不要混用旧 bootloader、分区表和新应用。
 
@@ -169,7 +169,7 @@ Factory 已请求全部外设电源轨，板载器件正常时，扫描应能看
 4. 按 KEY4 唤醒，必要时保持按下直至设备开始启动，再释放；重连 USB 串口并执行 `power`，应能看到相应的 KEY4 唤醒来源。
 5. 验证 USB 插入唤醒时，需由电池维持待机、VBUS 原先不在位，再插入 USB，检查 `USB/VBUS wake`。持续插着 USB 不会再触发插入事件；**USB-only 断开 USB 后再插入属于重新上电，不能当作电池维持的插入唤醒测试**。
 
-deep sleep 保留 DCDC1，不是真正 PMIC 关机。唤醒会重新执行启动流程，从第 1 项开始；测试结果保存在 RAM，重启/深睡唤醒后不保留。不要把新启动的第 1 项 PASS 当成第 3 项通过。需要重新记录第 3 项时，选 `run 3` 再结合刚才的实际观察人工确认。完整供电条件和失败恢复说明见 [供电与休眠](../../docs/power_and_sleep.md)。
+deep sleep 保留 DCDC1，不是真正 PMIC 关机。唤醒会重新执行启动流程，从第 1 项开始；测试结果保存在 RAM，重启/深睡唤醒后不保留。不要把新启动的第 1 项 PASS 当成第 3 项通过。需要重新记录第 3 项时，选 `run 3` 再结合刚才的实际观察人工确认。完整供电条件和失败恢复说明见 [供电与休眠](../../docs/power_and_sleep.md#简体中文)。
 
 ## 7. 常见问题与最终记录
 
@@ -185,4 +185,4 @@ deep sleep 保留 DCDC1，不是真正 PMIC 关机。唤醒会重新执行启动
 
 最后执行 `status`，逐项核对 18 项；有 `WAIT` 或 `CHECK` 就不能称为全部验证通过。即使全是 `PASS`，也要结合原始日志、人工观察和仪器记录，防止手工覆盖掩盖失败。当前固件不自动导出或持久保存验收报告，请记录板卡/硬件版本、固件及构建入口、日期、操作者、各项观察和电压/电流实测值。
 
-更多依据见 [Factory 测试指南](../../docs/factory_test_guide_cn.md)、[音频说明](../../docs/audio.md) 和 [软件验证记录与实机边界](../../docs/validation.md)。
+更多依据见 [Factory 测试指南](../../docs/factory_test_guide_cn.md#简体中文)、[音频说明](../../docs/audio.md#简体中文) 和 [软件验证记录与实机边界](../../docs/validation.md#简体中文)。

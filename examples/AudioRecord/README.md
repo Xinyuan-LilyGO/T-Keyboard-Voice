@@ -24,4 +24,4 @@ Every 500 ms, the console reports four-channel RMS, raw peak, DC, and the CN5 de
 
 Speak into the onboard microphones or feed a known signal into CN5 and observe the corresponding channels. For record-then-playback, listen for the actual recording and check both speakers. Do not mistake noise from an unconnected ADC input for a valid signal. MIC4 may be quiet during capture-only `external` mode; it is a reference input, not an echo-cancellation algorithm.
 
-The CN5 detection pin is only a hint; some TRRS plugs do not change its state. Initialization or timeout failures print `FAILED`; retry with `onboard` or `external`. Check ALDO2, address `0x40`, I2S clocks, PSRAM, and plug type. See the [audio guide (Chinese)](../../docs/audio.md) for capture/playback switching, wire order, and gain details.
+The CN5 detection pin is only a hint; some TRRS plugs do not change its state. Initialization or timeout failures print `FAILED`; retry with `onboard` or `external`. Check ALDO2, address `0x40`, I2S clocks, PSRAM, and plug type. See the [audio guide](../../docs/audio.md) for capture/playback switching, wire order, and gain details.

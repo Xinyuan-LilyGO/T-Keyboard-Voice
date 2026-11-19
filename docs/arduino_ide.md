@@ -1,12 +1,106 @@
 # Arduino IDE / Arduino CLI
 
-## 支持方式
+[English](#english) | [简体中文](#简体中文)
+
+## English
+
+### Support Model
+
+The 7 demos and Factory use the existing `examples/` directly; no separate examples or driver changes are required. Use **Arduino-ESP32 3.3.11** and select **ESP32S3 Dev Module**. Do not use Arduino-ESP32 2.x.
+
+The test WAV is a read-only C++ resource inside the library. Arduino IDE no longer requires linker embedding options, LittleFS, an SD card, or a separate audio upload.
+
+### Generate Arduino IDE Installation ZIPs
+
+With Python available, run from the repository root:
+
+```bash
+python scripts/prepare_dependencies.py
+python scripts/package_arduino.py
+```
+
+The output directory `.build/arduino/zips/` contains `TKeyboardVoice.zip`, `SensorLib.zip`, `LovyanGFX.zip`, and `ButtonSense.zip`. Install them through **Sketch → Include Library → Add .ZIP Library**. The packages exclude `.pio/`, SDKs, and build caches. These library packages are for Arduino IDE; use the original repository for other build systems and maintenance scripts.
+
+### Arduino IDE 2.x Installation
+
+1. Add this URL under **Preferences → Additional Boards Manager URLs**:
+   `https://espressif.github.io/arduino-esp32/package_esp32_index.json`
+2. Install Espressif's **esp32 3.3.11** through Boards Manager.
+3. Place this repository in your Sketchbook at `libraries/TKeyboardVoice/`, with `library.properties` and `src/` directly inside that directory, not one level deeper. Restart the IDE.
+4. Install LovyanGFX **1.2.26** and ButtonSense **1.0.0**. SensorLib must be **0.4.1 from the pinned commit below**; do not substitute an older `XPowersLib`:
+   - [Pinned SensorLib ZIP](https://github.com/lewisxhe/SensorLib/archive/2b9e591f245e447d3d00ec8798c3f49b897882d9.zip)
+   - [LovyanGFX 1.2.26 ZIP](https://github.com/lovyan03/LovyanGFX/archive/3f78b7058fca0fd1fc1ddb32f75a18262e01d440.zip)
+   - [ButtonSense 1.0.0 ZIP](https://github.com/lbuque/ButtonSense/archive/b1aeb22a73c523b37ebd11bee54000b77484f76c.zip)
+   Use **Sketch → Include Library → Add .ZIP Library**. Remove older libraries with the same names through Library Manager or move them out of the Sketchbook so the IDE does not select the wrong version.
+5. Open an example through **File → Examples → LilyGO T-Keyboard Voice**, or open its `.ino` directly. Do not copy only the `.ino`: keep `build_opt.h` in the same directory, and also retain `Factory.cpp` for Factory.
+
+`build_opt.h` is a compiler-option response file read by the official Arduino-ESP32 build recipe, not a C++ header to `#include`. It limits SensorLib to this board's AXP2101 support, matching PlatformIO/ESP-IDF and avoiding unnecessary sensor-driver compilation.
+
+### Board Menus
+
+| Menu | Setting |
+| --- | --- |
+| Board | ESP32S3 Dev Module |
+| USB Mode | Hardware CDC and JTAG |
+| USB CDC On Boot | Enabled |
+| CPU Frequency | 240 MHz |
+| Flash Mode | QIO 80MHz |
+| Flash Size | 16MB (128Mb) |
+| Partition Scheme | 16M Flash (3MB APP/9.9MB FATFS), `app3M_fat9M_16MB` |
+| PSRAM | OPI PSRAM |
+| Upload Speed | 921600; lower to 460800 or 115200 if unreliable |
+| Port | The board's actual USB serial port |
+
+Set Serial Monitor to **115200 baud** and terminate commands with a newline. CN3 UART0 is not the USB console. See each example README for wiring and power precautions.
+
+If automatic flashing fails, hold BOOT/KEY5, briefly press reset, then release BOOT. Reselect the download-mode port. After flashing, you may need to select the runtime USB port again.
+
+### Arduino CLI Batch Validation
+
+After installing Arduino CLI, run from the repository root:
+
+```bash
+arduino-cli core update-index --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+arduino-cli core install esp32:esp32@3.3.11 --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+python scripts/prepare_dependencies.py
+python scripts/build_arduino.py
+```
+
+Build selected examples:
+
+```bash
+python scripts/build_arduino.py Factory
+python scripts/build_arduino.py AudioPlayback AudioRecord
+```
+
+Use `--cli`, `--config-file`, and `--deps-dir` to select the tool and isolated configuration. The script does not flash hardware or modify global library directories. To avoid rebuilding libraries when sketch paths or dependency-discovery order change, it generates a temporary copy of the selected example under `.build/arduino/sketch/VoiceExample/` and includes a fixed set of board headers first. It does not modify `examples/` or maintain a second application implementation; drivers are read directly from repository `src/`.
+
+The shared `.build/arduino/work/` directory reuses core/library compilation caches. Per-example outputs are copied to `.build/arduino/build/<ExampleName>/`, with logs in `.build/logs/arduino/`. Batch output filenames use the common `VoiceExample.ino` prefix; the containing directory identifies the example. Do not manually compile into the same work directory while the script is running.
+
+Arduino CLI uses the same platform, build recipes, library resolution, and `.ino` preprocessing as Arduino IDE. A CLI build pass does not mean that the IDE GUI was manually operated or that hardware acceptance is complete.
+
+### Updating Test Audio
+
+```bash
+python scripts/generate_audio.py
+python scripts/generate_audio.py --check
+```
+
+After changing `assets/66_stereo_48k.wav`, regenerate `src/audio/test_audio.inc` and version both files together. The resource stays in Flash rather than being copied entirely into RAM at startup. AudioRecord does not call test-clip playback, so the linker removes the unused WAV.
+
+---
+
+## 简体中文
+
+**Arduino IDE / Arduino CLI**
+
+### 支持方式
 
 7 个 Demo 和 Factory 直接使用现有 `examples/`，不需要另一套示例或修改驱动。使用 **Arduino-ESP32 3.3.11**，板型选择 **ESP32S3 Dev Module**。不要使用 Arduino-ESP32 2.x。
 
 测试 WAV 已转换为库内只读 C++ 资源，Arduino IDE 不再需要 linker 嵌入参数、LittleFS、SD 卡或额外上传音频文件。
 
-## 生成 Arduino IDE 安装包
+### 生成 Arduino IDE 安装包
 
 已有 Python 时，可在仓库根目录执行：
 
@@ -17,7 +111,7 @@ python scripts/package_arduino.py
 
 `.build/arduino/zips/` 会生成 `TKeyboardVoice.zip`、`SensorLib.zip`、`LovyanGFX.zip`、`ButtonSense.zip`。在 IDE 中依次使用「项目 → 加载库 → 添加 .ZIP 库」安装即可；四个包不包含 `.pio/`、SDK 和构建缓存。生成的库包用于 Arduino IDE；其他构建入口和维护脚本请使用原仓库。
 
-## Arduino IDE 2.x 安装
+### Arduino IDE 2.x 安装
 
 1. 在「首选项 → 附加开发板管理器网址」中加入：
    `https://espressif.github.io/arduino-esp32/package_esp32_index.json`
@@ -32,7 +126,7 @@ python scripts/package_arduino.py
 
 `build_opt.h` 是 Arduino-ESP32 官方构建配方读取的编译参数文件，不是要 `#include` 的 C++ 头文件。它使 SensorLib 仅保留本板需要的 AXP2101，与 PlatformIO/ESP-IDF 的配置一致，避免编译大量无关传感器驱动。
 
-## 开发板菜单
+### 开发板菜单
 
 | 菜单 | 设置 |
 | --- | --- |
@@ -51,7 +145,7 @@ python scripts/package_arduino.py
 
 如果自动下载失败，按住 BOOT/KEY5，短按复位键后再松开 BOOT；重新选择下载模式下的端口。上传成功后可能需要重新选择运行态 USB 端口。
 
-## Arduino CLI 批量验证
+### Arduino CLI 批量验证
 
 安装 Arduino CLI 后，在仓库根目录执行：
 
@@ -75,7 +169,7 @@ python scripts/build_arduino.py AudioPlayback AudioRecord
 
 Arduino CLI 使用 Arduino IDE 同一套平台、编译配方、库解析与 `.ino` 预处理器；CLI 编译通过不等于 IDE GUI 已人工操作或硬件已经验收。
 
-## 更新音频
+### 更新音频
 
 ```bash
 python scripts/generate_audio.py

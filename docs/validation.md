@@ -1,15 +1,136 @@
-# 验证记录与实机验收清单
+# Validation Record and Hardware Acceptance Checklist
+
+[English](#english) | [简体中文](#简体中文)
+
+## English
+
+Date: 2026-11-18.
+
+### Current Hardware Configuration
+
+- 7 standalone functional demos + 1 Factory, for 8 examples in total.
+- Factory uses 18 consecutive tests: 13 WS2812, 14 CN4 I2C, 15 CN3 UART, 16 external MIC/AEC, 17 AUX record/playback, and 18 onboard pair record/playback.
+- KEY1–KEY5 are retained; KEY5 remains GPIO0. GPIO4/5 are no longer configured or polled by this project.
+- Sources, all three build systems, CI, bilingual instructions, and source test documents are aligned with the current hardware.
+
+### Software Validation for This Revision
+
+The table was revalidated after this revision's code changes, rather than reusing old configuration results or firmware checksums. Build scripts do not automatically flash hardware.
+
+- PlatformIO, Arduino CLI, and ESP-IDF each built all 8 current examples successfully: 8/8 PASS per system, 24 build combinations in total.
+- Host C++ regressions passed 2/2. Documentation/metadata, audio synchronization, and Factory's 18-case dispatch consistency checks also passed.
+- Factory ELFs from all three builds contain 18-entry name and instruction arrays. Retired input API symbols and outdated hints were confirmed absent.
+
+| Example | PlatformIO | Arduino IDE/CLI | ESP-IDF |
+| --- | --- | --- | --- |
+| Power | PASS | PASS | PASS |
+| Display | PASS | PASS | PASS |
+| Keys | PASS | PASS | PASS |
+| WS2812 | PASS | PASS | PASS |
+| AudioPlayback | PASS | PASS | PASS |
+| AudioRecord | PASS | PASS | PASS |
+| QWIIC | PASS | PASS | PASS |
+| Factory | PASS | PASS | PASS |
+
+Additional checks:
+
+- Native C++ regressions cover audio unpacking and the power-key state machine; Windows uses MSVC with `/W4 /WX`.
+- `scripts/check_repository.py` checks 8 examples, bilingual README naming and command consistency, local links, metadata, shared-layer isolation, and Factory's 18-item catalog/document numbering.
+- `scripts/generate_audio.py --check` verifies the embedded C++ resource against the original WAV.
+- Both original WAV files are unchanged. The source Word document has had entries cleaned up and numbering aligned to 18 tests; it is no longer byte-identical to the original. Original project files remain unchanged.
+- All 24 ELF/BIN outputs were checked. Image sizes and SHA-256 values are recorded in `.build/hardware_refresh_manifest.json`; old images were not presented as current firmware.
+- Concurrent PlatformIO build/IDE metadata testing passed, and the stable C++ entry survived cleanup. All 8 environments expose valid metadata targets.
+- Native VS Code tasks, the 8-environment picker, and toolbar bindings were checked. The Factory command expanded from the new task configuration built successfully. The `reading 'id'` exception was traced to an absent task in PlatformIO 3.3.4; local entries bypass it. GUI buttons still require manual confirmation after a window reload, and installed extension files were not modified.
+
+| Factory build | Current application BIN size (bytes) |
+| --- | --- |
+| PlatformIO | 940432 |
+| Arduino CLI | 912864 |
+| ESP-IDF | 997584 |
+
+### Tool and Dependency Versions
+
+| Tool/dependency | Version |
+| --- | --- |
+| PlatformIO Core | 6.1.19 |
+| Espressif 32 platform | 55.3.311, commit `f89295f6a617a8ec611f4bd4eb2f998799dc5dc8` |
+| Arduino-ESP32 | 3.3.11 |
+| ESP-IDF framework libraries used by PlatformIO | 5.5.5+sha.b774170ff46 |
+| Xtensa GCC | 14.2.0+20260121 |
+| PlatformIO esptool | 5.3.0 |
+| Arduino CLI | 1.6.0, official esp32 3.3.11, esptool 5.3.1 |
+| ESP-IDF SDK | 5.5.6 + official Arduino 3.3.11 component; dependencies locked in `idf/dependencies.lock` |
+| SensorLib | 0.4.1, commit `2b9e591f245e447d3d00ec8798c3f49b897882d9` |
+| LovyanGFX | 1.2.26 |
+| ButtonSense | 1.0.0 |
+| ESP_I2S | Built into framework 3.3.11 |
+
+### Reproduction and Outputs
+
+```bash
+python scripts/build_examples.py
+python scripts/test_host.py
+python scripts/check_repository.py
+python scripts/generate_audio.py --check
+```
+
+After preparing each toolchain as described in its guide, run:
+
+```bash
+python scripts/prepare_dependencies.py
+python scripts/build_arduino.py
+# Run the following in a terminal with ESP-IDF 5.5.6 exported.
+python scripts/build_idf.py
+```
+
+| Build system | Logs | Firmware outputs |
+| --- | --- | --- |
+| PlatformIO | `.build/logs/<environment>.log` | `.pio/build/<environment>/` |
+| Arduino CLI | `.build/logs/arduino/<ExampleName>.log` | `.build/arduino/build/<ExampleName>/` |
+| ESP-IDF | `.build/logs/idf/<ExampleName>.log` | `.build/idf/<ExampleName>/` |
+
+Final Arduino CLI batch validation uses a fixed temporary sketch and official build recipes, with drivers read directly from repository sources. ESP-IDF uses the Arduino component rather than a pure ESP-IDF driver port. Different partition layouts and build recipes mean image sizes need not match; do not mix flashing files from different systems.
+
+CI covers all three build systems, but local results do not by themselves establish that GitHub Actions ran. `.pio/`, `.build/`, exported example `build/` directories, and temporary `*.ino.cpp` files are excluded from version control.
+
+### Hardware Acceptance Still Required
+
+Compilation is not treated as a hardware pass. Check these items on the current physical board:
+
+- [ ] Five-display numbers, colors, order, and shared backlight.
+- [ ] All five key inputs and navigation.
+- [ ] Colors, count, and chase order of all 14 WS2812 LEDs.
+- [ ] Onboard microphones, external MIC3, MIC4 reference, and CN5 detection.
+- [ ] Both speakers, headphones, PA, and both record/playback paths.
+- [ ] External I2C on CN4 and CN3 UART peer/loopback tests.
+- [ ] Sleep under USB-only and battery/no-VBUS conditions, KEY4 wake, and USB-insertion wake.
+- [ ] Actual rail voltages, charging protection, and sleep current.
+- [ ] All 18 Factory tests, key navigation, and manual confirmation.
+
+Builds and native tests verify buildability and the corresponding pure logic, not audio electrical paths or other hardware acceptance. Arduino IDE compatibility is tested through the official CLI's matching build chain, not manual IDE GUI operation.
+
+### Support Boundaries
+
+- [Arduino IDE/CLI guide](arduino_ide.md) and [ESP-IDF guide](esp_idf.md).
+- No hardware was flashed and no official production firmware was released. Hardware acceptance and resource licensing must be confirmed before a formal release.
+- GitHub commits and remote CI status are authoritative on the [repository](https://github.com/Xinyuan-LilyGO/T-Keyboard-Voice) Commits/Actions pages; the local results above do not replace remote run results.
+
+---
+
+## 简体中文
+
+**验证记录与实机验收清单**
 
 日期：2026年11月18日。
 
-## 当前硬件配置
+### 当前硬件配置
 
 - 7 个独立功能 Demo + 1 个 Factory，共 8 个示例。
 - Factory 使用连续的 18 项测试：第 13 项 WS2812、第 14 项 CN4 I2C、第 15 项 CN3 UART、第 16 项外接 MIC/AEC、第 17 项 AUX 录放、第 18 项板载双麦录放。
 - 保留 KEY1～KEY5，KEY5 仍为 GPIO0；GPIO4/5 不再由本项目配置或轮询。
 - 源码、三种构建入口、CI、中英文说明及来源测试文档均按当前硬件同步。
 
-## 本轮软件验证
+### 本轮软件验证
 
 本轮代码变更后重新验证下表，不沿用旧配置的构建结论或固件校验值。固件构建不会自动烧录设备。
 
@@ -44,7 +165,7 @@
 | Arduino CLI | 912864 |
 | ESP-IDF | 997584 |
 
-## 工具与依赖版本
+### 工具与依赖版本
 
 | 工具/依赖 | 版本 |
 | --- | --- |
@@ -61,7 +182,7 @@
 | ButtonSense | 1.0.0 |
 | ESP_I2S | 框架内置 3.3.11 |
 
-## 复现与产物
+### 复现与产物
 
 ```bash
 python scripts/build_examples.py
@@ -89,7 +210,7 @@ Arduino CLI 最终批量复验使用固定临时 Sketch 和官方编译配方，
 
 CI 已覆盖三种入口，但本地结果不等于已在 GitHub Actions 执行。`.pio/`、`.build/`、示例导出的 `build/` 以及临时 `*.ino.cpp` 均不纳入版本管理。
 
-## 尚未进行的实机验收
+### 尚未进行的实机验收
 
 未将编译结果当作硬件通过，以下项目仍需连接当前实际板卡检查：
 
@@ -105,8 +226,8 @@ CI 已覆盖三种入口，但本地结果不等于已在 GitHub Actions 执行�
 
 编译与主机测试只验证可构建性及相应纯逻辑，不证明音频电气链路或其他硬件功能合格。Arduino IDE 兼容性通过官方 CLI 的同一编译链验证，未人工操作 IDE GUI。
 
-## 支持边界
+### 支持边界
 
-- [Arduino IDE/CLI 使用说明](arduino_ide.md) 与 [ESP-IDF 使用说明](esp_idf.md)。
+- [Arduino IDE/CLI 使用说明](arduino_ide.md#简体中文) 与 [ESP-IDF 使用说明](esp_idf.md#简体中文)。
 - 没有烧录或发布正式出厂固件；正式发布前需完成实机验收及资源许可确认。
 - GitHub 提交记录与远程 CI 状态以[仓库](https://github.com/Xinyuan-LilyGO/T-Keyboard-Voice)的 Commits 和 Actions 页面为准；本节中的本机结果不代替远程运行结果。

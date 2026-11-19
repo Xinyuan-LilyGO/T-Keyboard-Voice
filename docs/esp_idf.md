@@ -1,6 +1,94 @@
-# ESP-IDF 支持
+# ESP-IDF Support
 
-## 架构与版本
+[English](#english) | [简体中文](#简体中文)
+
+## English
+
+### Architecture and Versions
+
+This is a project **built with `idf.py`, CMake, and the ESP-IDF toolchain**, but its drivers reuse the **Arduino-ESP32 component**. It is not an Arduino-free, pure ESP-IDF port. Existing `Wire`, `ESP_I2S`, ButtonSense, and related interfaces are retained rather than maintaining a second implementation.
+
+- ESP-IDF: **5.5.6**; the project restricts compatibility to 5.5.x.
+- Arduino-ESP32 component: **3.3.11**, fetched by official Component Manager.
+- The three other libraries use the same source versions as PlatformIO and are downloaded at pinned commits by `scripts/prepare_dependencies.py`.
+- Target: ESP32-S3 N16R8, 16 MB Flash, 8 MB OPI PSRAM.
+
+Install and export the matching ESP-IDF environment. If the current terminal defaults to 6.x, switch to 5.5.x rather than bypassing version checks.
+
+### Build Factory
+
+From the repository root in an exported ESP-IDF 5.5.x terminal:
+
+```bash
+python scripts/prepare_dependencies.py
+idf.py -C idf -D IDF_TARGET=esp32s3 -D VOICE_EXAMPLE=Factory build
+```
+
+Alternatively, enter `idf/` first:
+
+```bash
+idf.py -D IDF_TARGET=esp32s3 -D VOICE_EXAMPLE=Factory build
+```
+
+The first build needs internet access to fetch components. Do not use Arduino IDE or PlatformIO's precompiled SDK directory as an ESP-IDF installation.
+
+### Select an Example
+
+`VOICE_EXAMPLE` accepts `Power`, `Display`, `Keys`, `WS2812`, `AudioPlayback`, `AudioRecord`, `QWIIC`, or `Factory`.
+
+```bash
+idf.py -C idf -D IDF_TARGET=esp32s3 -D VOICE_EXAMPLE=AudioRecord build
+```
+
+CMake compiles the original `.ino` or `Factory.cpp` under `examples/` and selects only the required shared drivers. It does not copy application sources or include another demo's application entry. Explicitly set `VOICE_EXAMPLE` when switching; CMake remembers the previous selection.
+
+### Flash and Monitor
+
+```bash
+idf.py -C idf -D IDF_TARGET=esp32s3 -D VOICE_EXAMPLE=Factory -p COMx build flash monitor
+```
+
+Replace `COMx` with the actual device path on Linux/macOS. Exit the monitor with `Ctrl+]`. This command explicitly reselects Factory rather than accidentally flashing the previous example.
+
+### Batch Builds
+
+```bash
+python scripts/build_idf.py
+python scripts/build_idf.py Factory AudioRecord
+```
+
+The script uses the current `IDF_PATH` and `IDF_PYTHON_ENV_PATH`. It does not download or modify the system SDK or flash the board. Windows uses native Python/toolchain executables. Prefer the native ESP-IDF terminal; the script does not rely on Git Bash to activate the SDK.
+
+To reuse SDK build caches, batch builds share `.build/idf/work/`. Each successful example copies its ELF, application image, bootloader, partition table, and flashing arguments into `.build/idf/<ExampleName>/`. Logs are in `.build/logs/idf/`. The work directory ends with the **last example built**; do not run `flash` there and assume it contains Factory.
+
+### Files and Configuration
+
+```text
+idf/
+├── CMakeLists.txt               # Version, example, and dependency entry
+├── sdkconfig.defaults           # N16R8, PSRAM, 1000 Hz tick, Arduino autostart
+├── partitions.csv               # 16 MB Flash, 6 MB single application partition
+├── main/
+│   ├── CMakeLists.txt           # Original example and shared module selection
+│   ├── Kconfig.projbuild        # Arduino 3.3.11 ESP_I2S selection compatibility
+│   └── idf_component.yml        # Pinned official Arduino component
+└── components/                 # Thin CMake adapters for three libraries, no driver copies
+```
+
+- Arduino autostart calls the original `setup()` / `loop()`; do not add a second `app_main()`.
+- Arduino 3.3.11 CMake recognizes selective `ESP_I2S`, but its Kconfig lacks the declaration. `main/Kconfig.projbuild` supplies it without editing downloaded core sources. Only Wire, SPI, and ESP_I2S are enabled; other Arduino libraries are explicitly disabled. Component Manager may still download transitive dependencies declared by the official manifest.
+- USB CDC and onboard UART0 retain their existing roles.
+- Once sdkconfig exists, editing `sdkconfig.defaults` may not override its values. Check `menuconfig` or regenerate configuration in a disposable build directory.
+- Partition layouts differ between build systems. When switching, use the corresponding tool to flash the complete bootloader, partition table, and application. Do not write an application-only `.bin` at address 0 or combine it with an old partition table. OTA compatibility is not guaranteed here.
+- A successful build does not certify displays, audio, charging, or sleep on hardware. See [validation.md](validation.md) for acceptance status.
+
+---
+
+## 简体中文
+
+**ESP-IDF 支持**
+
+### 架构与版本
 
 这是**真正通过 `idf.py`、CMake 和 ESP-IDF 工具链构建的工程**，但驱动复用 **Arduino-ESP32 组件**，不是不依赖 Arduino 的纯 ESP-IDF 驱动移植。`Wire`、`ESP_I2S`、ButtonSense 等现有接口继续使用，不维护另一份功能实现。
 
@@ -11,7 +99,7 @@
 
 请安装并导出上述 ESP-IDF 环境；当前终端如果默认指向 6.x，先切换至 5.5.x，不要通过跳过版本检查强行构建。
 
-## 构建 Factory
+### 构建 Factory
 
 在已导出 ESP-IDF 5.5.x 的终端中，从仓库根目录执行：
 
@@ -28,7 +116,7 @@ idf.py -D IDF_TARGET=esp32s3 -D VOICE_EXAMPLE=Factory build
 
 首次运行需要联网下载组件。不要把 Arduino IDE 或 PlatformIO 的预编译 SDK 当作 ESP-IDF 安装目录。
 
-## 选择示例
+### 选择示例
 
 `VOICE_EXAMPLE` 可取：`Power`、`Display`、`Keys`、`WS2812`、`AudioPlayback`、`AudioRecord`、`QWIIC`、`Factory`。
 
@@ -38,7 +126,7 @@ idf.py -C idf -D IDF_TARGET=esp32s3 -D VOICE_EXAMPLE=AudioRecord build
 
 CMake 直接编译当前 `examples/` 的 `.ino` 或 `Factory.cpp`，只选择该示例需要的公共驱动；不会复制源码或包含其他 Demo 的应用入口。切换示例时必须显式传入 `VOICE_EXAMPLE`，CMake 会记住上一次选择。
 
-## 烧录与监视
+### 烧录与监视
 
 ```bash
 idf.py -C idf -D IDF_TARGET=esp32s3 -D VOICE_EXAMPLE=Factory -p COMx build flash monitor
@@ -46,7 +134,7 @@ idf.py -C idf -D IDF_TARGET=esp32s3 -D VOICE_EXAMPLE=Factory -p COMx build flash
 
 Linux/macOS 将 `COMx` 换为实际设备路径。监视器退出使用 `Ctrl+]`。本命令会重新确认 Factory 的选择，避免误烧录上一次构建的其他 Demo。
 
-## 批量构建
+### 批量构建
 
 ```bash
 python scripts/build_idf.py
@@ -57,7 +145,7 @@ python scripts/build_idf.py Factory AudioRecord
 
 为了复用 SDK 编译缓存，批量脚本共用 `.build/idf/work/`。每个成功的示例将 ELF、应用镜像、bootloader、分区表和烧录参数复制到 `.build/idf/<示例名>/`；日志在 `.build/logs/idf/`。共用工作目录最终保留的是**最后一个示例**，不要直接对它运行 `flash` 并假定是 Factory。
 
-## 文件和配置
+### 文件和配置
 
 ```text
 idf/
@@ -76,4 +164,4 @@ idf/
 - USB CDC 与板载 UART0 的用途保持不变。
 - sdkconfig 生成后，修改 `sdkconfig.defaults` 不一定覆盖已有值；需要在 `menuconfig` 中核对，或对可丢弃的构建目录重新配置。
 - 不同入口使用的分区表并不完全相同。切换构建系统应由各自工具完整烧录 bootloader、分区表与应用，不要只把应用 `.bin` 写到 0 地址，也不要混用旧分区表。这里不提供 OTA 升级保证。
-- 编译通过不代表显示、音频、充电或休眠已经实机验证。验收状态见 [validation.md](validation.md)。
+- 编译通过不代表显示、音频、充电或休眠已经实机验证。验收状态见 [validation.md](validation.md#简体中文)。

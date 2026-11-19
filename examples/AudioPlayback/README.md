@@ -23,4 +23,4 @@ After initialization, the PA is off and the demo waits for commands:
 
 The WAV is 48 kHz, 16-bit stereo. Playback is blocking and lasts for a short clip; commands are handled after playback finishes. A `sent` log only confirms that data was written successfully. Actual sound from both speakers/headphone channels must be checked by listening.
 
-If there is no sound, check address `0x10`, ALDO2, the clocks, PA state, and output wiring. Disabling the PA only controls the speaker amplifier; it does not mean the headphone output is muted. See the [audio guide (Chinese)](../../docs/audio.md) for registers, gain, and format details.
+If there is no sound, check address `0x10`, ALDO2, the clocks, PA state, and output wiring. Disabling the PA only controls the speaker amplifier; it does not mean the headphone output is muted. See the [audio guide](../../docs/audio.md) for registers, gain, and format details.

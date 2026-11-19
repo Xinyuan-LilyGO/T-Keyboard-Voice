@@ -61,7 +61,20 @@ def main():
         folders[:] = [name for name in folders if name not in {".pio", ".git", ".build", "managed_components", "build", "__pycache__", ".vscode"}]
         markdown.extend(Path(directory) / name for name in files if name.endswith(".md"))
     for path in markdown:
-        for link in re.findall(r"\]\(([^\s)]+)\)", path.read_text(encoding="utf-8")):
+        text = path.read_text(encoding="utf-8")
+        if (root / "docs") in path.parents:
+            english_marker = "\n## English\n"
+            chinese_marker = "\n## 简体中文\n"
+            if text.count(english_marker) != 1 or text.count(chinese_marker) != 1 or text.find(english_marker) > text.find(chinese_marker):
+                errors.append(f"docs 必须在同文件中先英文、后中文：{path.relative_to(root)}")
+            else:
+                english_part, chinese_part = text.split(english_marker, 1)[1].split(chinese_marker, 1)
+                def command_blocks(part):
+                    return ["\n".join(line.strip() for line in block.splitlines() if line.strip() and not line.lstrip().startswith("#"))
+                            for block in re.findall(r"```bash\n(.*?)```", part, re.S)]
+                if command_blocks(english_part) != command_blocks(chinese_part):
+                    errors.append(f"docs 中英文可执行命令不一致：{path.relative_to(root)}")
+        for link in re.findall(r"\]\(([^\s)]+)\)", text):
             if "://" in link or link.startswith(("#", "mailto:")):
                 continue
             target = link.split("#", 1)[0]
